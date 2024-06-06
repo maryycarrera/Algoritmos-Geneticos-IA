@@ -1,7 +1,8 @@
 import pandas as pd
 import numpy as np
 from sklearn.metrics import r2_score
-import random
+from operadores import cruzar, mutar
+from seleccion import seleccionarPadres, seleccionarSiguientePob
 
 def AG(datos_train, datos_test, seed, nInd, maxIter):
     # Cargar datos de entrenamiento
@@ -84,87 +85,6 @@ def regresion(coeficientes, nATr, caso):
     sol += coeficientes[i]
 
     return sol
-
-def seleccionarPadres(evaluacion, pob):
-    k = 4
-    num_individuos = random.randint(k, pob.shape[0]-1)
-    padres = np.zeros((num_individuos, pob.shape[1]))
-    for i in range(num_individuos):
-        individuos = np.zeros((k, pob.shape[1]))
-        fitness = np.zeros(k)
-        for j in range(k):
-            rand = random.randint(0, num_individuos-1)
-            individuos[j] = pob[rand]
-            fitness[j] = evaluacion[rand]
-        
-        index_mejor_individuo = np.argmax(fitness)
-        padres[i] = individuos[index_mejor_individuo]
-
-    return padres
-
-def cruzar(padres, pc):
-    punto_cruce = padres.shape[1] / 2
-    hijos = np.zeros(padres.shape)
-    i = 0
-
-    while(i<padres.shape[0]):
-        padre1 = padres[i]
-        padre2 = padres[i+1]
-        rand = random.random()
-
-        if(rand < pc):
-            hijo1 = np.concatenate((padre1[:punto_cruce], padre2[punto_cruce:]))
-            hijo2 = np.concatenate((padre2[:punto_cruce], padre1[punto_cruce:]))
-        else:
-            hijo1 = padre1
-            hijo2 = padre2
-        
-        hijos[i] = hijo1
-        hijos[i+1] = hijo2
-
-        i = i+2
-    
-    return hijos
-
-def mutar(pob, pm):
-    i = 0
-
-    while(i<pob.shape[0]):
-        individuo = pob[i]
-        rand = random.random()
-
-        if(rand < pm):
-            gen = random.randint(0, individuo.shape[0]-1)
-            individuo[gen] = 1 - individuo[gen]
-
-        i = i+1
-
-    return pob
-
-def seleccionarSiguientePob(pob, hijos, evalu_pob, evalu_hijos):
-    porcentaje=0.2
-    evalu_pob_ordenado = sorted(evalu_pob, reverse=True)
-    valores_maximos = evalu_pob_ordenado[:porcentaje_mejores_ind]
-
-    # Emparejar fitness con individuos y ordenarlos por fitness en orden descendente
-    evalu_pob_con_indices = list(enumerate(evalu_pob))
-    evalu_pob_con_indices.sort(key=lambda x: x[1], reverse=True)
-    
-    # Calcular el número de individuos a mantener como elitismo
-    total_ind = len(evalu_pob)
-    porcentaje_mejores_ind = int(total_ind * 0.2)
-    
-    # Obtener los índices de los mejores individuos
-    indices_elitismo = [idx for idx, _ in evalu_pob_con_indices[:cantidad_elitismo]]
-    
-    # Obtener los individuos que se mantendrán como elitismo
-    mejores_individuos = [pob[idx] for idx in indices_elitismo]
-    
-    # Obtener los individuos que serán cruzados (excluyendo los de elitismo)
-    indices_cruce = [idx for idx, _ in evalu_pob_con_indices[cantidad_elitismo:]]
-    individuos_cruce = [pob[idx] for idx in indices_cruce]
-    
-    return mejores_individuos, individuos_cruce
 
 def mejor(poblacion, atr_train, obj_train):
     mejor = 0

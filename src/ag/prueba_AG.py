@@ -7,20 +7,20 @@ from AG_marcartal1_natolmvil import AG
 # Nombre generico del dataset
 nombre_dataset = 'toy1'
 
-nombre_dataset_train = nombre_dataset+"_train.csv"
-nombre_dataset_val = nombre_dataset+"_val.csv"
+nombre_dataset_train = "../data/"+nombre_dataset+"_train.csv"
+nombre_dataset_val = "../data/"+nombre_dataset+"_val.csv"
 
 ag = AG(
 	# datos de entrenamiento (para el proceso del AG)
-	datos_train = nombre_dataset_train, 
+	datos_train = nombre_dataset_train,
 	# datos de validacion/test (para predecir)
-	datos_test = nombre_dataset_val, 
+	datos_test = nombre_dataset_val,
 	# semilla para numeros aleatorios
-	seed=123, 
+	seed=123,
 	# numero de individuos
-	nInd = 50, 
+	nInd = 50,
 	# maximo de iteraciones
-	maxIter = 100 
+	maxIter = 100
 )
 
 # Ejecucion del AG midiendo el tiempo
