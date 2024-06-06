@@ -2,9 +2,7 @@ import pandas as pd
 from sklearn.metrics import root_mean_squared_error, r2_score
 import time
 
-# La siguiente linea es un ejemplo
-# Modificar los import como sea necesario para cargar el AG implementado
-from AG_JMoyano import AG
+from AG_marcartal1_natolmvil import AG
 
 # Nombre generico del dataset
 nombre_dataset = 'toy1'
@@ -12,8 +10,6 @@ nombre_dataset = 'toy1'
 nombre_dataset_train = nombre_dataset+"_train.csv"
 nombre_dataset_val = nombre_dataset+"_val.csv"
 
-# La clase AG debe estar implementada
-# (importe los ficheros necesarios antes de ejecutar las siguientes lineas)
 ag = AG(
 	# datos de entrenamiento (para el proceso del AG)
 	datos_train = nombre_dataset_train, 
