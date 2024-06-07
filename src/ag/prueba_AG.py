@@ -5,10 +5,12 @@ import time
 from AG_marcartal1_natolmvil import AG
 
 # Nombre generico del dataset
-nombre_dataset = 'toy1'
+nombre_dataset = 'housing'
 
-nombre_dataset_train = "../data/"+nombre_dataset+"_train.csv"
-nombre_dataset_val = "../data/"+nombre_dataset+"_val.csv"
+ruta_carpetas = 'src/data/'
+
+nombre_dataset_train = ruta_carpetas+nombre_dataset+"_train.csv"
+nombre_dataset_val = ruta_carpetas+nombre_dataset+"_val.csv"
 
 ag = AG(
 	# datos de entrenamiento (para el proceso del AG)

@@ -2,7 +2,7 @@ import numpy as np
 import random
 
 def cruzar(padres, pc):
-    punto_cruce = padres.shape[1] / 2
+    punto_cruce = padres.shape[1] // 2
     hijos = np.zeros(padres.shape)
     i = 0
 
