@@ -5,7 +5,7 @@ import time
 from AG_marcartal1_natolmvil import AG
 
 # Nombre generico del dataset
-nombre_dataset = 'housing'
+nombre_dataset = 'toy1'
 
 ruta_carpetas = 'src/data/'
 

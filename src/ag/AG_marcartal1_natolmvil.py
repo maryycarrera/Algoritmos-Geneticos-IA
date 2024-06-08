@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from operadores import cruzar, mutar
 from seleccion import seleccionarPadres, seleccionarSiguientePob
-from fitness import fitness, regresion, fitness_poblacion
+from fitness import regresion, fitness_poblacion
 
 class AG:
     def __init__(self, datos_train, datos_test, seed, nInd, maxIter):
@@ -32,22 +32,23 @@ class AG:
         return poblacion
 
     def algoritmo_genetico(self, pob, nInd, maxIter, pc, pm, atr_train, obj_train):
-        porcentaje_elitismo=0.2
+        evalu_pob = fitness_poblacion(pob, atr_train, obj_train)
+        porcentaje_elitismo=0.1
         i = 0
         while(i < maxIter):
-            evalu_pob = fitness_poblacion(pob, atr_train, obj_train)
             padres = seleccionarPadres(evalu_pob, pob, porcentaje_elitismo, nInd)
             hijos = cruzar(padres, pc)
             hijos = mutar(hijos, pm)
             pob = seleccionarSiguientePob(pob, hijos, evalu_pob, porcentaje_elitismo)
+            evalu_pob = fitness_poblacion(pob, atr_train, obj_train)
             i += 1
 
         return pob, evalu_pob
 
     def mejor(self, poblacion, evalu_pob, atr_test):
-        mejor = 0
-        mejor_individuo = np.zeros(poblacion.shape[1])
-        for i in range(poblacion.shape[0]):
+        mejor = evalu_pob[0]
+        mejor_individuo = poblacion[0]
+        for i in range(1,poblacion.shape[0]):
             fit = evalu_pob[i]  # Fitness con el conjunto de entrenamiento
             if(fit > mejor):
                 mejor = fit

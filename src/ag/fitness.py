@@ -17,6 +17,8 @@ def fitness(individuo, atr_train, obj_train):
     # Regresión
     for i in range(casos):
         y_pred[i] = regresion(individuo, nAtr, atr_train[i])
+        if(y_pred[i] == float('inf') or y_pred[i] == float('-inf')):
+            y_pred[i] = np.argmax(y_pred)
 
     r2 = r2_score(obj_train, y_pred)
 
@@ -28,7 +30,9 @@ def regresion(coeficientes, nATr, caso):
     sol = 0
 
     while(j<nATr-1):
-        sol += coeficientes[i]*caso[j]**coeficientes[i+1]
+        if(coeficientes[i+1]<0 and caso[j]==0):
+            coeficientes[i+1] = coeficientes[i+1]*-1
+        sol += coeficientes[i]*(caso[j]**coeficientes[i+1])
         i = i+2
         j = j+1
 
