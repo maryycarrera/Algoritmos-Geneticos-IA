@@ -2,7 +2,7 @@ import numpy as np
 import random
 
 def seleccionarPadres(evaluacion, pob, porcentaje_elitismo, nInd):
-    k = 4
+    k = 5
     num_individuos = round((1 - porcentaje_elitismo)*nInd)
 
     if(num_individuos % 2 != 0):
@@ -18,6 +18,7 @@ def seleccionarPadres(evaluacion, pob, porcentaje_elitismo, nInd):
             fitness[j] = evaluacion[rand]
         
         index_mejor_individuo = np.argmax(fitness)
+        # index_mejor_individuo = np.argmin(fitness)
         padres[i] = individuos[index_mejor_individuo]
 
     return padres
@@ -27,6 +28,7 @@ def seleccionarSiguientePob(pob, hijos, evalu_pob, porcentaje_elitismo):
     # Emparejar fitness con individuos y ordenarlos por fitness en orden descendente
     evalu_pob_con_indices = list(enumerate(evalu_pob))
     evalu_pob_ordenado = sorted(evalu_pob_con_indices, key=lambda x: x[1], reverse=True)
+    # evalu_pob_ordenado = sorted(evalu_pob_con_indices, key=lambda x: x[1], reverse=False)
     
     # Calcular el número total de mejores individuos 
     total_ind = len(evalu_pob)

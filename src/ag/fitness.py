@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.metrics import r2_score
+from sklearn.metrics import r2_score, root_mean_squared_error
 
 def fitness_poblacion(poblacion, atr_train, obj_train):
     fitness_pob = np.zeros(poblacion.shape[0])
@@ -20,9 +20,10 @@ def fitness(individuo, atr_train, obj_train):
         if(y_pred[i] == float('inf') or y_pred[i] == float('-inf')):
             y_pred[i] = np.argmax(y_pred)
 
-    r2 = r2_score(obj_train, y_pred)
+    fit = r2_score(obj_train, y_pred)
+    # fit = root_mean_squared_error(obj_train, y_pred)
 
-    return r2
+    return fit
 
 def regresion(coeficientes, nATr, caso):
     i = 0
