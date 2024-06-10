@@ -2,57 +2,63 @@ import pandas as pd
 import numpy as np
 from operadores import cruzar, mutar
 from seleccion import seleccionarPadres, seleccionarSiguientePob
-from fitness import fitness, regresion, fitness_poblacion
+from fitness import regresion, fitness_poblacion
 
-def AG(datos_train, datos_test, seed, nInd, maxIter):
-    # Cargar datos de entrenamiento
-    datos_train = pd.read_csv(datos_train)
-    X_train = datos_train.iloc[:, :-1].values
-    y_train = datos_train.iloc[:, -1].values
+class AG:
+    def __init__(self, datos_train, datos_test, seed, nInd, maxIter):
+        self.datos_train = pd.read_csv(datos_train)
+        self.X_train = self.datos_train.iloc[:, :-1].values
+        self.y_train = self.datos_train.iloc[:, -1].values
+        
+        self.datos_test = pd.read_csv(datos_test)
+        self.X_test = self.datos_test.iloc[:, :-1].values
 
-    # Cargar datos de test
-    datos_test = pd.read_csv(datos_test)
-    X_test = datos_test.iloc[:, :-1].values
+        self.seed = seed
+        self.nInd = nInd
+        self.maxIter = maxIter
 
-    #Generar población inicial
-    num_atributos = X_train.shape[1]
-    poblacion_inicial = poblacion_inicial(num_atributos, nInd, seed)
+        self.pob_inicial = self.poblacion_inicial(self.X_train.shape[1], nInd, seed)
+    
+    def run(self):
+        pc = 0.8
+        pm = 0.1
+        poblacion_solucion, evalu_pob = self.algoritmo_genetico(self.pob_inicial, self.nInd, self.maxIter, pc, pm, self.X_train, self.y_train)
+        mejor_individuo, y_pred = self.mejor(poblacion_solucion,evalu_pob,self.X_test)
+        return mejor_individuo, y_pred
 
-    # Iterar
-    pc = 0.7
-    pm = 0.1
-    poblacion_solucion = algoritmo_genetico(poblacion_inicial, nInd, maxIter, pc, pm, X_train, y_train)
-    mejor_individuo, y_pred = mejor(poblacion_solucion, X_train, y_train, num_atributos)
+    def poblacion_inicial(self, nAtributos, nInd, semilla):
+        np.random.seed(semilla)
+        poblacion = np.random.randint(low=-2, high=2, size=(nInd, nAtributos*2+1))
+        return poblacion
 
-    return mejor_individuo, y_pred
+    def algoritmo_genetico(self, pob, nInd, maxIter, pc, pm, atr_train, obj_train):
+        evalu_pob = fitness_poblacion(pob, atr_train, obj_train)
+        porcentaje_elitismo=0.1
+        i = 0
+        while(i < maxIter):
+            padres = seleccionarPadres(evalu_pob, pob, porcentaje_elitismo, nInd)
+            hijos = cruzar(padres, pc)
+            hijos = mutar(hijos, pm)
+            pob = seleccionarSiguientePob(pob, hijos, evalu_pob, porcentaje_elitismo)
+            evalu_pob = fitness_poblacion(pob, atr_train, obj_train)
+            i += 1
 
-def poblacion_inicial(nAtributos, nInd, semilla):
-    np.random.seed(semilla)
-    poblacion = np.random.randint(2, size=(nInd, nAtributos*2+1))
-    return poblacion
+        return pob, evalu_pob
 
-def algoritmo_genetico(pob, nInd, maxIter, pc, pm, atr_train, obj_train):
-    evalu_pob = fitness_poblacion(pob, atr_train, obj_train) 
-    i=0
-    while(i<maxIter):
-        padres = seleccionarPadres(evalu_pob, pob)
-        hijos = cruzar(padres, pc)
-        hijos = mutar(hijos, pm)
-        evalu_hijos = fitness_poblacion(hijos, atr_train, obj_train) 
-        pob = seleccionarSiguientePob(pob, hijos, evalu_pob, evalu_hijos)
-        i = i+1
+    def mejor(self, poblacion, evalu_pob, atr_test):
+        mejor = evalu_pob[0]
+        mejor_individuo = poblacion[0]
+        for i in range(1,poblacion.shape[0]):
+            fit = evalu_pob[i]  # Fitness con el conjunto de entrenamiento
+            if(fit > mejor):
+                mejor = fit
+                mejor_individuo = poblacion[i]
+            # if(fit < mejor):
+            #     mejor = fit
+            #     mejor_individuo = poblacion[i]
 
-    return pob 
+        y_pred = []
+        for caso in atr_test:
+            y_pred.append(regresion(mejor_individuo, atr_test.shape[1], caso))  # Predicciones para el conjunto de prueba
 
-def mejor(poblacion, atr_train, obj_train):
-    mejor = 0
-    mejor_individuo = np.zeros(poblacion.shape[1])
-    for i in range(poblacion.shape[0]):
-        fit = fitness(poblacion[i], atr_train, obj_train)
-        if(fit > mejor):
-            mejor = fit
-            mejor_individuo = poblacion[i]
-
-    y_pred = regresion(mejor_individuo, atr_train.shape[1], atr_train)
-
-    return mejor_individuo, y_pred
+        return mejor_individuo, np.array(y_pred)

@@ -1,44 +1,53 @@
 import numpy as np
 import random
 
-def seleccionarPadres(evaluacion, pob):
-    k = 4
-    num_individuos = random.randint(k, pob.shape[0]-1) # Seleccionar un número aleatorio de individuos, no sé si debería coincidir con nInd
+def seleccionarPadres(evaluacion, pob, porcentaje_elitismo, nInd):
+    k = 5
+    num_individuos = round((1 - porcentaje_elitismo)*nInd)
+
+    if(num_individuos % 2 != 0):
+        num_individuos += 1
+    
     padres = np.zeros((num_individuos, pob.shape[1]))
     for i in range(num_individuos):
         individuos = np.zeros((k, pob.shape[1]))
         fitness = np.zeros(k)
         for j in range(k):
-            rand = random.randint(0, num_individuos-1)
+            rand = random.randint(0, pob.shape[0]-1)
             individuos[j] = pob[rand]
             fitness[j] = evaluacion[rand]
         
         index_mejor_individuo = np.argmax(fitness)
+        # index_mejor_individuo = np.argmin(fitness)
         padres[i] = individuos[index_mejor_individuo]
 
     return padres
 
-def seleccionarSiguientePob(pob, hijos, evalu_pob, evalu_hijos):
-    porcentaje=0.2
-    evalu_pob_ordenado = sorted(evalu_pob, reverse=True)
-    valores_maximos = evalu_pob_ordenado[:porcentaje_mejores_ind]
+def seleccionarSiguientePob(pob, hijos, evalu_pob, porcentaje_elitismo):
 
     # Emparejar fitness con individuos y ordenarlos por fitness en orden descendente
     evalu_pob_con_indices = list(enumerate(evalu_pob))
-    evalu_pob_con_indices.sort(key=lambda x: x[1], reverse=True)
+    evalu_pob_ordenado = sorted(evalu_pob_con_indices, key=lambda x: x[1], reverse=True)
+    # evalu_pob_ordenado = sorted(evalu_pob_con_indices, key=lambda x: x[1], reverse=False)
     
-    # Calcular el número de individuos a mantener como elitismo
+    # Calcular el número total de mejores individuos 
     total_ind = len(evalu_pob)
-    porcentaje_mejores_ind = int(total_ind * 0.2)
+    total_mejores_ind = round(total_ind * porcentaje_elitismo)
+
+    #Comprobamos que padres e hijos sean números pares
+    if(total_mejores_ind%2!=0):
+        total_mejores_ind=total_mejores_ind-1
+
+    if (len(hijos)%2!=0):
+        hijos.pop()
     
-    # Obtener los índices de los mejores individuos
-    indices_elitismo = [idx for idx, _ in evalu_pob_con_indices[:cantidad_elitismo]]
+    mejores_individuos = []
+    for i in range(total_mejores_ind):
+        indice, _ = evalu_pob_ordenado[i]
+        mejores_individuos.append(pob[indice])
+
+    mejores_individuos = np.array(mejores_individuos)
+
+    poblacion = np.concatenate((mejores_individuos, hijos), axis=0)
     
-    # Obtener los individuos que se mantendrán como elitismo
-    mejores_individuos = [pob[idx] for idx in indices_elitismo]
-    
-    # Obtener los individuos que serán cruzados (excluyendo los de elitismo)
-    indices_cruce = [idx for idx, _ in evalu_pob_con_indices[cantidad_elitismo:]]
-    individuos_cruce = [pob[idx] for idx in indices_cruce]
-    
-    return mejores_individuos, individuos_cruce
+    return poblacion
