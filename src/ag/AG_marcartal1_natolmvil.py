@@ -20,7 +20,7 @@ class AG:
         self.pob_inicial = self.poblacion_inicial(self.X_train.shape[1], nInd, seed)
     
     def run(self):
-        pc = 0.8
+        pc = 0.7
         pm = 0.1
         poblacion_solucion, evalu_pob = self.algoritmo_genetico(self.pob_inicial, self.nInd, self.maxIter, pc, pm, self.X_train, self.y_train)
         mejor_individuo, y_pred = self.mejor(poblacion_solucion,evalu_pob,self.X_test)
@@ -28,7 +28,7 @@ class AG:
 
     def poblacion_inicial(self, nAtributos, nInd, semilla):
         np.random.seed(semilla)
-        poblacion = np.random.randint(low=-2, high=2, size=(nInd, nAtributos*2+1))
+        poblacion = np.random.uniform(low=-2, high=2, size=(nInd, nAtributos*2+1))
         return poblacion
 
     def algoritmo_genetico(self, pob, nInd, maxIter, pc, pm, atr_train, obj_train):

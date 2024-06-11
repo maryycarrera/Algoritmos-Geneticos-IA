@@ -30,10 +30,11 @@ def regresion(coeficientes, nATr, caso):
     j = 0
     sol = 0
 
-    while(j<nATr-1):
-        if(coeficientes[i+1]<0 and caso[j]==0):
+    while(j<nATr):
+        coeficientes[i+1] = round(coeficientes[i+1])
+        if(caso[j] == 0 and coeficientes[i+1] < 0):
             coeficientes[i+1] = coeficientes[i+1]*-1
-        sol += coeficientes[i]*(caso[j]**coeficientes[i+1])
+        sol += coeficientes[i]*caso[j]**coeficientes[i+1]
         i = i+2
         j = j+1
 
