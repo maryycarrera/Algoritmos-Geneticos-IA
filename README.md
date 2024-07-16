@@ -24,11 +24,11 @@ A grandes rasgos, se ha decidido enfocar este problema de la siguiente forma: un
 
 - Representación de los individuos: Un array del tamaño de los coeficientes de regresión de acuerdo a la ecuación de regresión, pues serían entonces 2 coeficientes por cada atributo, “ci” un coeficiente multiplicando al valor de dicho atributo, “ei” un exponente asociado al valor del atributo; y “C” el valor de una única constante. Cada celda del array representará cada uno de estos coeficientes. Los valores de este en un primer momento serán valores enteros entre el intervalo [-2,2], aunque luego se podrán convertir en números de tipo flotante.
 
-    ![Ecuación de regresión](.\img\regresion.png)
+    ![Ecuación de regresión](img\regresion.png)
 
 - Función fitness: se evalúa cómo de bueno será el individuo dado y lo hará mediante ecuación de regresión y coeficiente de determinación. Se trata de maximizar el coeficiente de terminación para obtener soluciones más precisas.
 
-    ![Coeficiente de determinación](.\img\coeficiente.png)
+    ![Coeficiente de determinación](img\coeficiente.png)
 
 - Selección de padres: selección por torneo. Esta se basa en escoger un número k de individuos de la población aleatorios, y escoger el mejor de entre ellos para formar parte de la población de padres. Este proceso se repetirá tantas veces como número de individuos hijos sean necesarios generar posteriormente.
 
@@ -47,7 +47,7 @@ Asimismo, se han creado otros archivos: “fitness.py”, “operadores.py” y 
 
 En el siguiente esquema se muestran los métodos de los archivos, así como las relaciones y las llamadas recursivas entre ellos. Los nombres de los archivos aparecerán marcados en negrita, para diferenciarlos de los nombres de los métodos
 
-![Estructura del proyecto](.\img\estructura.png)
+![Estructura del proyecto](img\estructura.png)
 
 A continuación, se van a explicar en detalle cada uno de los métodos contenidos en estos archivos.
 El método “\_\_init__” se encarga de recoger los datos de los csv y guardar esos valores en las variables correspondientes. Asimismo, hará una llamada al método “población_inicial”, encargado de generar una primera generación de individuos aleatoriamente representando a cada individuo por los coeficientes de la ecuación de regresión, esto es dos coeficientes por cada atributo y el coeficiente final. Estos valores aleatorios estarán comprendidos entre -2 y 2. 
@@ -56,7 +56,7 @@ A continuación, se ejecuta el método “run”, en el que se definen las proba
 
 El diseño del algoritmo genético se encuentra contenido en este primer método, “algoritmo_genetico” y es de importancia destacar que este ha sido diseñado e implementado siguiendo todas las directrices del pdf proporcionado por el profesorado. A continuación, se muestra en pseudocódigo lo que ocurre en este método para comprender mejor el funcionamiento del algoritmo:
 
-![Pseudocódigo Algoritmo Genético](.\img\pseudocodigo.png)
+![Pseudocódigo Algoritmo Genético](img\pseudocodigo.png)
 
 Ahora se procede a analizar en más detalle las funciones de este algoritmo.
 - *fitness_poblacion*: Este método se encarga de evaluar a los individuos según la ecuación de regresión para determinar las predicciones de los valores objetivos. Además, se evaluará cómo de buenas han sido esas predicciones en función del coeficiente de determinación, que compara el error cuadrático medio con la varianza de los valores correctos, que sería el error que cometería un modelo que siempre proporcionara como salida la media de los valores correctos.
